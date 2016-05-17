@@ -38,18 +38,21 @@ def download_page(url, referer, maxretries, timeout, pause):
     htmlpage = None
     while tries < maxretries and htmlpage is None:
         try:
+            code = 404
             req = request.Request(url)
             req.add_header('Referer', referer)
             req.add_header('User-agent',
                            'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.30 (KHTML, like Gecko) Ubuntu/11.04 Chromium/12.0.742.91 Chrome/12.0.742.91 Safari/534.30')
             with closing(request.urlopen(req, timeout=timeout)) as f:
-                htmlpage = f.read()
                 code = f.getcode()
+                htmlpage = f.read()
                 sleep(pause)
         except (urlerror.URLError, socket.timeout, socket.error):
             tries += 1
-    return htmlpage.decode('utf-8'), code
-
+    if htmlpage:
+        return htmlpage.decode('utf-8'), code
+    else:
+        return None, code
 
 def main():
     # sys.stdout = codecs.getwriter('utf8')(sys.stdout.buffer)
@@ -108,13 +111,13 @@ def main():
             print(url)
             htmlpage, code = download_page(url, referer, args.maxretries, args.timeout, args.pause)
 
-            if htmlpage is None:
+            if htmlpage is None or code != 200:
                 if code == 503:
                     page -= 1
                     args.pause += 2
-                    print('(' + code + ') Retrying downloading the URL: ' + url)
+                    print('(' + str(code) + ') Retrying downloading the URL: ' + url)
                 else:
-                    print('(' + code + ') Done downloading the URL: ' + url)
+                    print('(' + str(code) + ') Done downloading the URL: ' + url)
                     break
             else:
                 print('Got page ' + str(page) + ' out of ' + str(lastPage) + ' for product ' + id_ + ' timeout=' + str(
