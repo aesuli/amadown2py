@@ -31,7 +31,7 @@ def get_review_filesnames(input_dir):
 
 
 idre = re.compile('product\-reviews/([A-Z0-9]+)/ref\=cm_cr_arp_d_hist', re.MULTILINE | re.S)
-contentre = re.compile('cm_cr-review_list.*?>(.*?)<div class=\"a-form-actions a-spacing-top-extra-large',
+contentre = re.compile('cm_cr-review_list.*?>(.*?)(?:askReviewsPageAskWidget|a-form-actions a-spacing-top-extra-large)',
                        re.MULTILINE | re.S)
 blockre = re.compile('a-section review\">(.*?)report-abuse-link', re.MULTILINE | re.S)
 ratingre = re.compile('star-(.) review-rating', re.MULTILINE | re.S)
