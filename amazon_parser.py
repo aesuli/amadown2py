@@ -58,6 +58,8 @@ def main():
         for filepath in get_review_filesnames(args.dir):
             with codecs.open(filepath, mode='r', encoding='utf8') as file:
                 htmlpage = file.read()
+            if not idre.search(htmlpage):
+                continue
             id_ = idre.findall(htmlpage)[0]
             print(id_, filepath)
             htmlpage = contentre.findall(htmlpage)[0]
