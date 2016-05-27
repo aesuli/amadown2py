@@ -23,6 +23,9 @@ import os
 import fnmatch
 import re
 
+if sys.version_info[0] >= 3:
+    import html
+
 
 def get_review_filesnames(input_dir):
     for root, dirnames, filenames in os.walk(input_dir):
@@ -31,8 +34,9 @@ def get_review_filesnames(input_dir):
 
 
 idre = re.compile('product\-reviews/([A-Z0-9]+)/ref\=cm_cr_arp_d_hist', re.MULTILINE | re.S)
-contentre = re.compile('cm_cr-review_list.*?>(.*?)(?:askReviewsPageAskWidget|a-form-actions a-spacing-top-extra-large|/html)',
-                       re.MULTILINE | re.S)
+contentre = re.compile(
+    'cm_cr-review_list.*?>(.*?)(?:askReviewsPageAskWidget|a-form-actions a-spacing-top-extra-large|/html)',
+    re.MULTILINE | re.S)
 blockre = re.compile('a-section review\">(.*?)report-abuse-link', re.MULTILINE | re.S)
 ratingre = re.compile('star-(.) review-rating', re.MULTILINE | re.S)
 titlere = re.compile('review-title.*?>(.*?)</a>', re.MULTILINE | re.S)
@@ -66,6 +70,15 @@ def main():
             for block in blockre.findall(htmlpage):
                 title = titlere.findall(block)[0]
                 reviewtext = reviewre.findall(block)[0]
+                if sys.version_info[0] >= 3:
+                    try:
+                        title = html.unescape(title)
+                    except Exception:
+                        pass
+                    try:
+                        reviewtext = html.unescape(reviewtext)
+                    except Exception:
+                        pass
                 rating = int(ratingre.findall(block)[0])
                 date = datere.findall(block)[0]
                 user = 'ANONYMOUS'
