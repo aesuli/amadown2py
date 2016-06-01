@@ -142,7 +142,7 @@ def main():
                 if args.pause >= 2:
                     args.pause -= 1
             referer = urlPart1 + str(id_) + urlPart2 + str(page) + urlPart3
-            if page*10>=args.maxreviews:
+            if args.maxreviews>0 and page*10>=args.maxreviews:
                 break
             page += 1
 
